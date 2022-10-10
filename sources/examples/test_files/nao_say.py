@@ -1,5 +1,4 @@
 # nao_say.py
-import naoqi
 from nao_conf import *
 from naoqi import ALProxy
 tts = ALProxy("ALTextToSpeech", IP, 9559)
