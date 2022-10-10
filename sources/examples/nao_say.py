@@ -1,4 +1,4 @@
-#!/usr/bin/python
+# nao_say.py
 import naoqi
 from nao_conf import *
 from naoqi import ALProxy
