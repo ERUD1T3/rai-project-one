@@ -3,10 +3,6 @@
 # Before running this command please check your PYTHONPATH is set correctly to the folder of your pynaoqi sdk.
 from naoqi import ALProxy 
 from nao_conf import *
-import time
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import csv
 
 # Set the IP address of your NAO.
 ip = IP
@@ -75,51 +71,51 @@ def read_sonar(n_samples = 20, n_cleanups=1):
     right_sonar_mean = sum(right_sonar_values) / len(right_sonar_values)
 
     # print sonar values
-    print("Left:", left_sonar_mean)
-    print("Right:", right_sonar_mean, "\n")
+    # print("Left:", left_sonar_mean)
+    # print("Right:", right_sonar_mean, "\n")
     
     return (left_sonar_mean + right_sonar_mean) / 2.0
 
 
-def plot_sonar():
-    '''Plot sonar values in a graph.'''
+# def plot_sonar():
+#     '''Plot sonar values in a graph.'''
 
-    fig = plt.figure()
-    ax1 = fig.add_subplot(1,1,1)
+#     fig = plt.figure()
+#     ax1 = fig.add_subplot(1,1,1)
 
-    def animate(i):
-        left_sonar_mean, right_sonar_mean = read_sonar()
-        ax1.clear()
-        ax1.plot([left_sonar_mean, right_sonar_mean])
-        ax1.set_ylim([0, 1.5])
+#     def animate(i):
+#         left_sonar_mean, right_sonar_mean = read_sonar()
+#         ax1.clear()
+#         ax1.plot([left_sonar_mean, right_sonar_mean])
+#         ax1.set_ylim([0, 1.5])
 
-    ani = animation.FuncAnimation(fig, animate, interval=1000)
-    plt.show()
+#     ani = animation.FuncAnimation(fig, animate, interval=1000)
+#     plt.show()
 
-def write_csv(data, path):
-    '''Write sonar, imu, data to csv values to a csv file.
-    data: list of tuples (
-        timestep, distance along wall, 
-        left sonar, right sonar, rotation angle, 
-        measured x, measured y, measured theta)
-    path: path to csv file
-    '''
+# def write_csv(data, path):
+#     '''Write sonar, imu, data to csv values to a csv file.
+#     data: list of tuples (
+#         timestep, distance along wall, 
+#         left sonar, right sonar, rotation angle, 
+#         measured x, measured y, measured theta)
+#     path: path to csv file
+#     '''
 
-    with open(path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(['t', 'y', 'x', 'r_x', 'r_y'])
-        for row in data:
-            writer.writerow(row)
-
-
-def gather_date():
-    '''Gather sonar, imu, data to csv values to a csv file.'''
-    pass
+#     with open(path, 'w', newline='') as csvfile:
+#         writer = csv.writer(csvfile, delimiter=',')
+#         writer.writerow(['t', 'y', 'x', 'r_x', 'r_y'])
+#         for row in data:
+#             writer.writerow(row)
 
 
-while True:
-    # Get sonar left first echo (distance in meters to the first obstacle).
-    left_sonar, right_sonar = read_sonar(n_samples=20)
-    # print sonar values
-    print("Left:", left_sonar)
-    print("Right:", right_sonar, "\n")
+# def gather_date():
+#     '''Gather sonar, imu, data to csv values to a csv file.'''
+#     pass
+
+
+# while True:
+#     # Get sonar left first echo (distance in meters to the first obstacle).
+#     sonar_reading = read_sonar(n_samples=20)
+#     # print sonar values
+#     print("Sonar reading:", sonar_reading, "\n")
+

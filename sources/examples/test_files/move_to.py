@@ -1,11 +1,10 @@
-import math
-from turtle import distance
 import almath as m # python's wrapping of almath
 import sys
 import time
 from naoqi import ALProxy
 from nao_conf import *
 import matplotlib.pyplot as plt
+from rai_sonar import read_sonar
 
 
 
@@ -52,28 +51,30 @@ def main(robotIP):
     initRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
 
     X = 0
-    Y = 0.2
+    Y = 0.1
     Theta = 0
-    left = []
-    right = []
+    x_array = []
     time_arr = []
     time_start = time.time()
     time_now = 0
 
     #while memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value") > 0.1 and memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value") > 0.1:
 
-    while time_now < 20:
+    # 20 second window
+    while time_now < 50:
+
+
         print(time_now)
         motionProxy.post.move(X, Y, Theta)
-        time.sleep(0.25)
-        #print("Left:",memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
-        left.append(memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
-        #print("Right:", memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value"), "\n")
-        right.append(memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value"))
+        #read sonar
+        sonar_readings = read_sonar()
         time_now = time.time() - time_start
         time_arr.append(time_now)
+        x_array.append(sonar_readings)
         # wait is useful because with post moveTo is not blocking function
         #motionProxy.waitUntilMoveIsFinished()
+
+
     motionProxy.post.stopMove()
 
     #####################
@@ -86,8 +87,7 @@ def main(robotIP):
     #####################
     robotMove = m.pose2DInverse(initRobotPosition)*endRobotPosition
     print "Robot Move :", robotMove
-    plt.plot(time_arr, right)
-    plt.plot(time_arr, left)
+    plt.plot(time_arr, x_array)
     #plt.set_ylabel('Sonar Distance')
     #plt.set_xlabel('Distance Traveled')
     plt.legend()

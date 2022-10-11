@@ -4,6 +4,7 @@ import time
 import random
 from naoqi import ALProxy
 from nao_conf import *
+from rai_sonar import read_sonar 
 
 def StiffnessOn(proxy):
     # We use the "Body" name to signify the collection of all joints
