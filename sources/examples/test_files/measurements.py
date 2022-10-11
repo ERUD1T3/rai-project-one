@@ -20,38 +20,43 @@ sonarProxy.subscribe("myApplication")
 #Now you can retrieve sonar data from ALMemory.
 memoryProxy = ALProxy("ALMemory", ip, 9559)
 
-def read_sonar(n_cleanups=1):
+def read_sonar(n_samples = 5, n_cleanups=1):
     '''Read sonar values print them to the console.'''
 
     left_sonar_echos = [
         "Device/SubDeviceList/US/Left/Sensor/Value",
-        "Device/SubDeviceList/US/Left/Sensor/Value1",
-        "Device/SubDeviceList/US/Left/Sensor/Value2",
-        "Device/SubDeviceList/US/Left/Sensor/Value3",
-        "Device/SubDeviceList/US/Left/Sensor/Value4",
-        "Device/SubDeviceList/US/Left/Sensor/Value5",
-        "Device/SubDeviceList/US/Left/Sensor/Value6",
-        "Device/SubDeviceList/US/Left/Sensor/Value7",
-        "Device/SubDeviceList/US/Left/Sensor/Value8",
-        "Device/SubDeviceList/US/Left/Sensor/Value9",
+        # "Device/SubDeviceList/US/Left/Sensor/Value1",
+        # "Device/SubDeviceList/US/Left/Sensor/Value2",
+        # "Device/SubDeviceList/US/Left/Sensor/Value3",
+        # "Device/SubDeviceList/US/Left/Sensor/Value4",
+        # "Device/SubDeviceList/US/Left/Sensor/Value5",
+        # "Device/SubDeviceList/US/Left/Sensor/Value6",
+        # "Device/SubDeviceList/US/Left/Sensor/Value7",
+        # "Device/SubDeviceList/US/Left/Sensor/Value8",
+        # "Device/SubDeviceList/US/Left/Sensor/Value9",
     ]
 
     right_sonar_echos = [
         "Device/SubDeviceList/US/Right/Sensor/Value",
-        "Device/SubDeviceList/US/Right/Sensor/Value1",
-        "Device/SubDeviceList/US/Right/Sensor/Value2",
-        "Device/SubDeviceList/US/Right/Sensor/Value3",
-        "Device/SubDeviceList/US/Right/Sensor/Value4",
-        "Device/SubDeviceList/US/Right/Sensor/Value5",
-        "Device/SubDeviceList/US/Right/Sensor/Value6",
-        "Device/SubDeviceList/US/Right/Sensor/Value7",
-        "Device/SubDeviceList/US/Right/Sensor/Value8",
-        "Device/SubDeviceList/US/Right/Sensor/Value9",
+        # "Device/SubDeviceList/US/Right/Sensor/Value1",
+        # "Device/SubDeviceList/US/Right/Sensor/Value2",
+        # "Device/SubDeviceList/US/Right/Sensor/Value3",
+        # "Device/SubDeviceList/US/Right/Sensor/Value4",
+        # "Device/SubDeviceList/US/Right/Sensor/Value5",
+        # "Device/SubDeviceList/US/Right/Sensor/Value6",
+        # "Device/SubDeviceList/US/Right/Sensor/Value7",
+        # "Device/SubDeviceList/US/Right/Sensor/Value8",
+        # "Device/SubDeviceList/US/Right/Sensor/Value9",
     ]
 
-    # read raw sonar values
-    left_sonar_values = [memoryProxy.getData(key) for key in left_sonar_echos]
-    right_sonar_values = [memoryProxy.getData(key) for key in right_sonar_echos]
+    left_sonar_values = []
+    right_sonar_values = []
+
+    # read n samples
+    for _ in range(n_samples):
+        # read raw sonar values
+        left_sonar_values.append([memoryProxy.getData(key) for key in left_sonar_echos])
+        right_sonar_values.append([memoryProxy.getData(key) for key in right_sonar_echos])
 
     # remove outliers 
     for _ in range(n_cleanups):
@@ -106,6 +111,10 @@ def write_csv(data, path):
         for row in data:
             writer.writerow(row)
 
+
+def gather_date():
+    '''Gather sonar, imu, data to csv values to a csv file.'''
+    pass
 
 
 while True:
