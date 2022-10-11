@@ -55,20 +55,20 @@ def read_sonar(n_samples = 5, n_cleanups=1):
     # read n samples
     for _ in range(n_samples):
         # read raw sonar values
-        left_sonar_values.append([memoryProxy.getData(key) for key in left_sonar_echos])
-        right_sonar_values.append([memoryProxy.getData(key) for key in right_sonar_echos])
+        left_sonar_values.append(memoryProxy.getData(left_sonar_echos[0]))
+        right_sonar_values.append(memoryProxy.getData(right_sonar_echos[0]))
 
     # remove outliers 
-    for _ in range(n_cleanups):
-        # find mean of all sonar echos for left and right
-        left_sonar_mean = sum(left_sonar_values) / len(left_sonar_values)
-        right_sonar_mean = sum(right_sonar_values) / len(right_sonar_values)
-        # find standard deviation of all sonar echos for left and right
-        left_sonar_std = (sum([(value - left_sonar_mean) ** 2 for value in left_sonar_values]) / len(left_sonar_values)) ** 0.5
-        right_sonar_std = (sum([(value - right_sonar_mean) ** 2 for value in right_sonar_values]) / len(right_sonar_values)) ** 0.5
-        # remove outliers
-        left_sonar_values = [value for value in left_sonar_values if abs(value - left_sonar_mean) < left_sonar_std]
-        right_sonar_values = [value for value in right_sonar_values if abs(value - right_sonar_mean) < right_sonar_std]
+    # for _ in range(n_cleanups):
+    #     # find mean of all sonar echos for left and right
+    #     left_sonar_mean = sum(left_sonar_values) / len(left_sonar_values)
+    #     right_sonar_mean = sum(right_sonar_values) / len(right_sonar_values)
+    #     # find standard deviation of all sonar echos for left and right
+    #     left_sonar_std = (sum([(value - left_sonar_mean) ** 2 for value in left_sonar_values]) / len(left_sonar_values)) ** 0.5
+    #     right_sonar_std = (sum([(value - right_sonar_mean) ** 2 for value in right_sonar_values]) / len(right_sonar_values)) ** 0.5
+    #     # remove outliers
+    #     left_sonar_values = [value for value in left_sonar_values if abs(value - left_sonar_mean) < left_sonar_std]
+    #     right_sonar_values = [value for value in right_sonar_values if abs(value - right_sonar_mean) < right_sonar_std]
 
     # calculate mean of all sonar echos for left and right
     left_sonar_mean = sum(left_sonar_values) / len(left_sonar_values)
@@ -119,7 +119,7 @@ def gather_date():
 
 while True:
     # Get sonar left first echo (distance in meters to the first obstacle).
-    left_sonar, right_sonar = read_sonar()
+    left_sonar, right_sonar = read_sonar(n_samples=20)
     # print sonar values
     print("Left:", left_sonar)
     print("Right:", right_sonar, "\n")

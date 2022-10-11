@@ -52,7 +52,7 @@ def main(robotIP):
     initRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
 
     X = 0
-    Y = 0.5
+    Y = 0.2
     Theta = 0
     left = []
     right = []
@@ -62,9 +62,10 @@ def main(robotIP):
 
     #while memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value") > 0.1 and memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value") > 0.1:
 
-    while time_now < 10:
+    while time_now < 20:
         print(time_now)
         motionProxy.post.move(X, Y, Theta)
+        time.sleep(0.25)
         #print("Left:",memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
         left.append(memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
         #print("Right:", memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value"), "\n")
@@ -85,8 +86,8 @@ def main(robotIP):
     #####################
     robotMove = m.pose2DInverse(initRobotPosition)*endRobotPosition
     print "Robot Move :", robotMove
-    plt.scatter(time_arr, right)
-    plt.scatter(time_arr, left)
+    plt.plot(time_arr, right)
+    plt.plot(time_arr, left)
     #plt.set_ylabel('Sonar Distance')
     #plt.set_xlabel('Distance Traveled')
     plt.legend()

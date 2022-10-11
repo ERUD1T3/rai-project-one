@@ -18,10 +18,10 @@ memoryProxy = ALProxy("ALMemory", ip, 9559)
 
 while True:
     # Get sonar left first echo (distance in meters to the first obstacle).
-    print("Left:",memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
+    print("Left:",memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value1"))
 
     # Same thing for right.
-    print("Right:", memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value"), "\n")
+    print("Right:", memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value1"), "\n")
     time.sleep(1)
 
 
