@@ -20,7 +20,7 @@ sonarProxy.subscribe("myApplication")
 #Now you can retrieve sonar data from ALMemory.
 memoryProxy = ALProxy("ALMemory", ip, 9559)
 
-def read_sonar(n_samples = 5, n_cleanups=1):
+def read_sonar(n_samples = 20, n_cleanups=1):
     '''Read sonar values print them to the console.'''
 
     left_sonar_echos = [
@@ -78,7 +78,7 @@ def read_sonar(n_samples = 5, n_cleanups=1):
     print("Left:", left_sonar_mean)
     print("Right:", right_sonar_mean, "\n")
     
-    return left_sonar_mean, right_sonar_mean
+    return (left_sonar_mean + right_sonar_mean) / 2.0
 
 
 def plot_sonar():
@@ -107,7 +107,7 @@ def write_csv(data, path):
 
     with open(path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(['t', 'y', 'x_l', 'x_r', 'theta', 'r_x', 'r_y', 'r_theta'])
+        writer.writerow(['t', 'y', 'x', 'r_x', 'r_y'])
         for row in data:
             writer.writerow(row)
 
