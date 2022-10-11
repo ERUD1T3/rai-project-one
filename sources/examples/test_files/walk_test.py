@@ -32,6 +32,8 @@ def main(robotIP):
     # Set NAO in Stiffness On
     StiffnessOn(motionProxy)
 
+    
+
     # Send NAO to Pose Init
     postureProxy.goToPosture("StandInit", 0.5)
 

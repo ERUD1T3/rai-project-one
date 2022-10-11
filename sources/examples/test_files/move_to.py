@@ -1,8 +1,11 @@
 import math
+from turtle import distance
 import almath as m # python's wrapping of almath
 import sys
+import time
 from naoqi import ALProxy
 from nao_conf import *
+import matplotlib.pyplot as plt
 
 
 
@@ -17,6 +20,7 @@ def StiffnessOn(proxy):
 def main(robotIP):
     try:
         motionProxy = ALProxy("ALMotion", robotIP, 9559)
+        
     except Exception, e:
         print "Could not create proxy to ALMotion"
         print "Error was: ", e
@@ -24,6 +28,11 @@ def main(robotIP):
 
     # Set NAO in stiffness On
     StiffnessOn(motionProxy)
+    sonarProxy = ALProxy("ALSonar", robotIP, 9559)
+    sonarProxy.subscribe("myApplication")
+    memoryProxy = ALProxy("ALMemory", robotIP, 9559)
+    postureProxy = ALProxy("ALRobotPosture", IP, 9559)
+    postureProxy.goToPosture("Stand", 0.8)
 
     #####################
     ## Enable arms control by move algorithm
@@ -42,12 +51,29 @@ def main(robotIP):
     #####################
     initRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
 
-    X = 0.3
-    Y = 0.1
-    Theta = math.pi/2.0
-    motionProxy.post.moveTo(X, Y, Theta)
-    # wait is useful because with post moveTo is not blocking function
-    motionProxy.waitUntilMoveIsFinished()
+    X = 0
+    Y = 0.5
+    Theta = 0
+    left = []
+    right = []
+    time_arr = []
+    time_start = time.time()
+    time_now = 0
+
+    #while memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value") > 0.1 and memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value") > 0.1:
+
+    while time_now < 10:
+        print(time_now)
+        motionProxy.post.move(X, Y, Theta)
+        #print("Left:",memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
+        left.append(memoryProxy.getData("Device/SubDeviceList/US/Left/Sensor/Value"))
+        #print("Right:", memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value"), "\n")
+        right.append(memoryProxy.getData("Device/SubDeviceList/US/Right/Sensor/Value"))
+        time_now = time.time() - time_start
+        time_arr.append(time_now)
+        # wait is useful because with post moveTo is not blocking function
+        #motionProxy.waitUntilMoveIsFinished()
+    motionProxy.post.stopMove()
 
     #####################
     ## get robot position after move
@@ -59,7 +85,12 @@ def main(robotIP):
     #####################
     robotMove = m.pose2DInverse(initRobotPosition)*endRobotPosition
     print "Robot Move :", robotMove
-
+    plt.scatter(time_arr, right)
+    plt.scatter(time_arr, left)
+    #plt.set_ylabel('Sonar Distance')
+    #plt.set_xlabel('Distance Traveled')
+    plt.legend()
+    plt.show() 
 
 if __name__ == "__main__":
     robotIp = "127.0.0.1"

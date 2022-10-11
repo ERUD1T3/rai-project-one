@@ -10,4 +10,16 @@ postureProxy = ALProxy("ALRobotPosture", IP, 9559)
 print(postureProxy.getPostureList())
 #motionProxy = ALProxy("ALMotion", IP, 9559)
 #motionProxy.setFallManagerEnabled(False)
-postureProxy.goToPosture("LyingBelly", 0.2)
+#postureProxy.goToPosture("Crouch", 0.8)
+
+try:
+    motionProxy = ALProxy("ALMotion", IP, 9559)
+except Exception, e:
+    print "Could not create proxy to ALMotion"
+    print "Error was: ", e
+
+# We use the "Body" name to signify the collection of all joints
+pNames = "Body"
+pStiffnessLists = 0
+pTimeLists = 1
+motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
