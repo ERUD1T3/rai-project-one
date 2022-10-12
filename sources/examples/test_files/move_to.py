@@ -5,6 +5,7 @@ from naoqi import ALProxy
 from nao_conf import *
 import matplotlib.pyplot as plt
 from rai_sonar import read_sonar
+import csv
 
 
 
@@ -15,11 +16,30 @@ def StiffnessOn(proxy):
     pTimeLists = 1.0
     proxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 
+def write_to_csv(time_arr, x_array, r_x_array, r_y_array):
+    '''
+    Write the data to a csv file
+    '''
+    filename = f'../../../data/sonar_data_{time.time()}.csv'
+    with open(filename, 'w') as csvfile:
+        # write the header
+        fieldnames = ['time', 'sonar', 'robot_x', 'robot_y']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        # write the data
+        for i in range(len(time_arr)):
+            writer.writerow({
+                'time': time_arr[i], 
+                'sonar': x_array[i], 
+                'robot_x': r_x_array[i], 
+                'robot_y': r_y_array[i]})
+        
+
 
 def main(robotIP):
     try:
         motionProxy = ALProxy("ALMotion", robotIP, 9559)
-        
+
     except Exception as e:
         print("Could not create proxy to ALMotion")
         print("Error was: ", e)
@@ -85,6 +105,9 @@ def main(robotIP):
         r_y_array.append(robotMove.y)
 
     motionProxy.post.stopMove()
+
+    # write the data to a csv file
+    write_to_csv(time_arr, x_array, r_x_array, r_y_array)
 
     # plot the sonar readings, and the robot's position in subplot
     fig, ax1 = plt.subplots()
