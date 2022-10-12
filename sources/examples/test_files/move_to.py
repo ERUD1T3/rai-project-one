@@ -39,6 +39,10 @@ def main(robotIP):
     motionProxy.setWalkArmsEnabled(True, True)
     #~ motionProxy.setWalkArmsEnabled(False, False)
 
+    # Fix head position
+    motionProxy.setAngles("HeadYaw", 0, 0.6)
+    motionProxy.setAngles("HeadPitch", 0, 0.6)
+
     #####################
     ## FOOT CONTACT PROTECTION
     #####################
@@ -89,11 +93,11 @@ def main(robotIP):
     ax1.set_ylabel('sonar readings', color='b')
     ax1.tick_params('y', colors='b')
 
-    ax2 = ax1.twinx()
-    ax2.plot(time_arr, r_x_array, 'r-')
-    ax2.plot(time_arr, r_y_array, 'g-')
-    ax2.set_ylabel('robot position', color='r')
-    ax2.tick_params('y', colors='r')
+    # ax2 = ax1.twinx()
+    # ax2.plot(time_arr, r_x_array, 'r-')
+    # ax2.plot(time_arr, r_y_array, 'g-')
+    # ax2.set_ylabel('robot position', color='r')
+    # ax2.tick_params('y', colors='r')
 
     fig.tight_layout()
     plt.show()
