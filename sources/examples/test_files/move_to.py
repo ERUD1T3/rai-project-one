@@ -125,6 +125,9 @@ def main(robotIP):
     fig.tight_layout()
     plt.show()
 
+    # save plot
+    fig.savefig(f'../../../data/sonar_data_{time.time()}.png')
+
     # plt.plot(time_arr, x_array)
     # plt.plot(time_arr, r_x_array)
     # plt.plot(time_arr, r_y_array)
