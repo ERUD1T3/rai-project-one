@@ -1,3 +1,4 @@
+from matplotlib.figure import figaspect
 import almath as m # python's wrapping of almath
 import sys
 import time
@@ -20,7 +21,7 @@ def write_to_csv(time_arr, x_array, r_x_array, r_y_array):
     '''
     Write the data to a csv file
     '''
-    filename = f'../../../data/sonar_data_{time.time()}.csv'
+    filename = '../../../data/sonar_data_{}.csv'.format(time.time())
     with open(filename, 'w') as csvfile:
         # write the header
         fieldnames = ['time', 'sonar', 'robot_x', 'robot_y']
@@ -84,13 +85,13 @@ def main(robotIP):
     time_now = 0
 
     # 20 second window
-    while time_now < 50:
+    while time_now < 40:
 
 
         print(time_now)
         motionProxy.post.move(X, Y, Theta)
         #read sonar
-        sonar_readings = read_sonar()
+        sonar_readings = read_sonar(20)
         time_now = time.time() - time_start
         time_arr.append(time_now)
         # print(sonar_readings)
@@ -122,8 +123,9 @@ def main(robotIP):
     # ax2.set_ylabel('robot position', color='r')
     # ax2.tick_params('y', colors='r')
 
+    
     fig.tight_layout()
-    plt.show()
+    fig.savefig('../../../data/plot_{}.png'.format(time.time()))
 
     # save plot
     fig.savefig(f'../../../data/sonar_data_{time.time()}.png')
