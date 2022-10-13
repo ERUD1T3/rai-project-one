@@ -5,7 +5,7 @@ import time
 from naoqi import ALProxy
 from nao_conf import *
 import matplotlib.pyplot as plt
-from rai_sonar import read_sonar
+from rai_sonar import read_sonar, savitzky_golay
 import csv
 
 
@@ -103,11 +103,13 @@ def main(robotIP):
         if sonar_readings < min_dist:
             # move away from the wall
             # motionProxy.post.move(0, 0.1, 0)
-            motionProxy.post.move(-.1, .1, wTheta)
+            motionProxy.post.move(-.1, 0, wTheta)
+            motionProxy.post.move(0, .1, wTheta)
         elif sonar_readings > max_dist:
             # move towards the wall
             # motionProxy.post.move(0, -0.1, 0)
-            motionProxy.post.move(.1, .1, wTheta)
+            motionProxy.post.move(.1, 0, wTheta)
+            motionProxy.post.move(0, .1, wTheta)
         else:
             # stay put
             motionProxy.post.move(0, 0.1, wTheta)
