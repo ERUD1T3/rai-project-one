@@ -51,7 +51,7 @@ def bayesnet():
     sensor_nodes = []
     position_nodes = []
     action_nodes = []
-    door_node = BayesNode(0, name="door")
+    door_node = BayesNode(0, 2, name="door")
     counter = 1
     for i in range(num_mesurements):
         sensor_nodes.append(BayesNode(counter, name=("sensor_"+i))
