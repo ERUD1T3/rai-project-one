@@ -149,7 +149,7 @@ def main(robotIP):
     fig.savefig('../../../data/plot_{}.png'.format(time.time()))
 
     # save plot
-    fig.savefig(f'../../../data/sonar_data_{time.time()}.png')
+    fig.savefig('../../../data/sonar_data_{}.png'.format(time.time()))
 
     # plt.plot(time_arr, x_array)
     # plt.plot(time_arr, r_x_array)
