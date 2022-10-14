@@ -1,9 +1,5 @@
 # get probabilities of the sonar readings
-
-import numpy as np
-import matplotlib.pyplot as plt
 import csv
-import time
 
 # read the data from the csv file
 def read_from_csv(path, n_samples=60):
@@ -16,12 +12,14 @@ def read_from_csv(path, n_samples=60):
         next(plots)
         # read the data and stop at n_samples
         for row in plots:
+            # print(row)
+            
             # get the time
-            time_arr.append(bool(row[0]))
+            time_arr.append(True if row[0] == 'True' else False)
             # get the sonar reading
-            z_array.append(bool(row[1]))
+            z_array.append(True if row[1] == 'True' else False)
             # get the sonar reading
-            a_array.append(bool(row[2]))
+            a_array.append(True if row[2] == 'True' else False)
             # check if we have read enough samples
             if len(time_arr) >= n_samples:
                 break
@@ -41,10 +39,9 @@ def get_bool(x_array, check_fn):
 def compute_prob(x_array):
     # computer probabilities based on count
     # get the number of times true appears in the array
-    count = 0
+    count = 0.0
     for x in x_array:
-        if x:
-            count += 1
+        if x: count += 1
     return count/len(x_array)
 
 # generate cpts based on samples
@@ -67,7 +64,11 @@ def generate_cpts(samples):
     print("number of variables: {}".format( num_vars))
 
     # find probabilities for each variable at the given time step
-    cpts = {}
+    z_cpts = {}
+    a_cpts = {}
+
+    # print the samples
+    print(samples)
 
     # for each time step
     for t in range(num_time_steps):
@@ -77,30 +78,34 @@ def generate_cpts(samples):
             x_array = []
             for sample in samples:
                 # print length of sample
-                print(len(sample))
-                print(len(sample[0]))
+                # print(len(sample))
+                # print(len(sample[0]))
                 # print var and t
-                print("var: {}".format( var))
-                print("t: {}".format( t))
+                # print("var: {}".format( var))
+                # print("t: {}".format( t))
                 # print sample at var and t
-                print("sample at {}{} =  {}".format(var, t, sample[var][t]))
+                # print("sample at {}{} =  {}".format(var, t, sample[var][t]))
                 x_array.append(sample[var][t])
             # get the probabilities of the sonar readings based on the check function
             bools = x_array
+            print(bools)
             # computer probabilities based on count
             prob = compute_prob(bools)
             # add the probability to the cpts
             if var == 1:
-                cpts[('z', t)] = prob
+                z_cpts[('z', t)] = prob
                 # print cpt with 3 decimal places
                 print("cpt[('z', {})] = {:.3f}".format(t, prob))
                 
             else:
-                cpts[('a', t)] = prob
+                a_cpts[('a', t)] = prob
                 # print cpt with 3 decimal places
                 print("cpt[('a', {})] = {:.3f}".format(t, prob))
 
-    return cpts
+    return z_cpts, a_cpts
+
+
+
 
 
 # generate cpts based on samples

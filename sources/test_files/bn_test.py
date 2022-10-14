@@ -1,4 +1,5 @@
 # read samples and compute probabilities
+from curses import A_PROTECT
 from get_probs import read_from_csv, generate_cpts
 import os
 
@@ -21,11 +22,24 @@ def main():
     print(samples[0][0][0])
 
     # generate cpts
-    cpts = generate_cpts(samples)
+    z_cpts, a_cpts = generate_cpts(samples)
 
     # print the cpts
-    print(cpts)
+    print("z_cpts: {}".format(z_cpts))
+    print("a_cpts: {}".format(a_cpts))
 
+    # write the z_cpts to a file
+    with open('../../data/cpts/z_cpts.txt', 'w') as f:
+        # write the cpts key and values
+        for cpt in z_cpts:
+            f.write("{}: {}\n".format(cpt, z_cpts[cpt]))
+
+    # write the a_cpts to a file
+    with open('../../data/cpts/a_cpts.txt', 'w') as f:
+        # write the lines and their probabilities
+        for cpt in a_cpts:
+            f.write("{}: {}\n".format(cpt, a_cpts[cpt]))
+        
 
 if __name__ == '__main__':
     main()
