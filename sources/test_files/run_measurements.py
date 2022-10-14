@@ -22,7 +22,7 @@ def write_to_csv(time_arr, z_array, a_array):
     '''
     Write the data to a csv file
     '''
-    filename = '../../../data/sonar_data_{}.csv'.format(time.time())
+    filename = '../../data/sonar_data_{}.csv'.format(time.time())
     with open(filename, 'w') as csvfile:
         # write the header
         fieldnames = ['t', 'z', 'a']
@@ -171,10 +171,10 @@ def main(robotIP):
 
     
     fig.tight_layout()
-    fig.savefig('../../../data/plot_{}.png'.format(time.time()))
+    fig.savefig('../../data/plots/plot_{}.png'.format(time.time()))
 
     # save plot
-    fig.savefig('../../../data/sonar_data_{}.png'.format(time.time()))
+    fig.savefig('../../data/plots/sonar_data_{}.png'.format(time.time()))
 
     # plt.plot(time_arr, x_array)
     # plt.plot(time_arr, r_x_array)
