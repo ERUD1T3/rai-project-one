@@ -8,17 +8,16 @@ import time
 # read the data from the csv file
 def read_from_csv():
     time_arr = []
-    x_array = []
-    r_x_array = []
-    r_y_array = []
+    z_array = []
+    a_array = []
     with open('data.csv', 'r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
-            time_arr.append(float(row[0]))
-            x_array.append(float(row[1]))
-            r_x_array.append(float(row[2]))
-            r_y_array.append(float(row[3]))
-    return time_arr, x_array, r_x_array, r_y_array
+            time_arr.append(bool(row[0]))
+            z_array.append(bool(row[1]))
+            a_array.append(bool(row[2]))
+
+    return time_arr, z_array, a_array
 
 # get the probabilities of the sonar readings
 def get_bool(x_array, check_fn):
