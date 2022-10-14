@@ -1,19 +1,31 @@
-from pgmpy.models import BayesianNetwork
-from pgmpy.factors.discrete import TabularCPD
-import networkx as nx
-import pylab as plt
- 
-# Defining Bayesian Structure
-model = BayesianNetwork([('Guest', 'Host'), ('Price', 'Host')])
- 
-# Defining the CPDs:
-cpd_guest = TabularCPD('Guest', 3, [[0.33], [0.33], [0.33]])
-cpd_price = TabularCPD('Price', 3, [[0.33], [0.33], [0.33]])
-cpd_host = TabularCPD('Host', 3, [[0, 0, 0, 0, 0.5, 1, 0, 1, 0.5],
-                            [0.5, 0, 1, 0, 0, 0, 1, 0, 0.5],
-                            [0.5, 1, 0, 1, 0.5, 0, 0, 0, 0]],
-                  evidence=['Guest', 'Price'], evidence_card=[3, 3])
+# read samples and compute probabilities
+from get_probs import read_from_csv, generate_cpts
+import os
 
-model.add_cpds(cpd_guest, cpd_price, cpd_host)
+def main():
 
-model.check_model()
+    # read all files in the directory
+    files = os.listdir('../../data/csvs')
+    print(files)
+    # read the data from the csv file
+    samples = []
+    for file in files:
+        # read the data
+        time_arr, z_array, a_array = read_from_csv('../../data/csvs/' + file)
+        # append the data to the samples
+        samples.append([time_arr, z_array, a_array])
+    
+    print(len(samples))
+    print(len(samples[0]))
+    print(len(samples[0][0]))
+    print(samples[0][0][0])
+
+    # generate cpts
+    cpts = generate_cpts(samples)
+
+    # print the cpts
+    print(cpts)
+
+
+if __name__ == '__main__':
+    main()
