@@ -26,15 +26,6 @@ def read_from_csv(path, n_samples=60):
 
     return time_arr, z_array, a_array
 
-# get the probabilities of the sonar readings
-def get_bool(x_array, check_fn):
-    # get the probabilities of the sonar readings based on the check function
-    bools = []
-    for x in x_array:
-        bools.append(check_fn(x))
-    return bools
-
-
 # compute probability
 def compute_prob(x_array):
     # computer probabilities based on count
@@ -103,49 +94,4 @@ def generate_cpts(samples):
                 print("cpt[('a', {})] = {:.3f}".format(t, prob))
 
     return z_cpts, a_cpts
-
-
-
-
-
-# generate cpts based on samples
-def generate_cpts_comp(samples, check_fn):
-    # generate cpts based on samples
-    # sample is 3D array
-    # first dimension is the number of samples
-    # second dimension is the number of time steps
-    # third dimension is the number of variables
-    # return cpts based on trues
-
-    # get the number of samples
-    num_samples = len(samples)
-    # get the number of time steps
-    num_time_steps = len(samples[0])
-    # get the number of variables
-    num_vars = len(samples[0][0])
-
-    # find probabilities for each variable at the given time step
-    cpts = {}
-
-    # for each time step
-    for t in range(num_time_steps):
-        # for each variable skip the first one
-        for var in range(1, num_vars):
-            # get the array of values for the variable at the given time step
-            x_array = []
-            for sample in samples:
-                x_array.append(sample[t][var])
-            # get the probabilities of the sonar readings based on the check function
-            bools = get_bool(x_array, check_fn)
-            # computer probabilities based on count
-            prob = compute_prob(bools)
-            # add the probability to the cpts
-            if var == 1:
-                cpts[('z', t)] = prob
-            else:
-                cpts[('a', t)] = prob
-            
-
-    return cpts
-        
 

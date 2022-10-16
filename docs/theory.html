@@ -13985,21 +13985,27 @@ a.anchor-link {
 <h2 id="Description">Description<a class="anchor-link" href="#Description">&#182;</a></h2><p>Our aim is to implement a sensor fusion module based on a Bayesian Network. We are working with the NAO robot from Softbank robotics. NAO is a bipedal robot with a remarkable suite of sensors. However, for this project, we will focus on using NAO's sonar sensors to measure its distance to the wall. NAO will side step along the wall and, when has moved 0.1 meters past an open door, will exclaim "I just past the door!". 
 To build the Bayesian Network, we have devised the following random variables:</p>
 <ul>
-<li>D: the event of passing by the door</li>
-<li>$X_t$ (hidden variable): the actual position of the robot with respect to the wall at time $t$. The coordinate system used is with reference to the wall, with moving a meter unit along the wall as $+\hat{y}$ and moving a meter unit orthogonal away from the wall as $+\hat{x}$. </li>
-<li>$\hat{X}_t$: estimate of the actual position of the robot given its sensor readings.</li>
-<li>$Z_t$: observation or vector of left and right sonar readings and IMU angle reading at time $t$, $[x_l, x_r, \theta]$ where $x_l$ represent the left sonar reported distance to the wall, $x_r$ represents the right sonar reported distance to the wall, and $\theta$ represents the reported angle computed from the IMU.</li>
-<li>$A_t$: action or vector of left translation, right translation, and angular rotation at time $t$. $[r_x, r_y, r_\theta]$</li>
+<li>D: the event of passing by the door (True/False) </li>
+<li>$Z_t$: observation or distance from the wall reported by sonar at time $t$ being less than a $\tau = 0.5$ meters.(True/False)</li>
+<li>$A_t$: action or whether the robot has moved either forward or backward (True) or not moved (False).  (True/False)</li>
 <li>$t$: timestep variable. Each timestep is 1 second and the robot will move about 0.1 meters per timestep for a total of 2 meters in a 20s overal timestep window.</li>
 </ul>
 <p>From there then follows the Bayesian Network below:</p>
 <h4 id="20-seconds-Time-window-Bayesion-Network">20 seconds Time window Bayesion Network<a class="anchor-link" href="#20-seconds-Time-window-Bayesion-Network">&#182;</a></h4><p><img src="bn.png" ></p>
-<p>Based on the Network, we would like to find $P(D = true | A_1, A_2 ..., A_{20})$ as the probability that the robot passed by the door given the actions it has taken until the last timestep. It depends on the actions because, as the robot moves along the ways, it is trying to maintain constant distance from the wall and will adjust it's trajectory to maintain course. If the robot sense 2 major course correction due to a change the measured distance from the wall, then we know, it has passed an opened door.</p>
+<p>Based on the Network, we would like to find $P(D = true | A_1, A_2 ..., A_n)$ as the probability that the robot passed by the door given the actions it has taken until the last timestep at $n$. It depends on the actions because, as the robot moves along the ways, it is trying to maintain constant distance from the wall and will adjust it's trajectory to maintain course. If the robot sense 2 major course correction due to a change the measured distance from the wall, then we know, it has passed an opened door.</p>
+<p>To calculate make our conditional propability tables, we collected samples over several runs and collected them into csv files. The probabilities where then found according to the following formulas:</p>
+<p>$P(Z_i) = \frac{\sum{(Z_i = True) in all samples}}{\sum{Z_i in all samples}}$\
+$P(A_i|Z_i = True) = \frac{\sum{(A_i = True) in all samples where Z_i = True}}{\sum{A_i in all samples where Z_i = True}}$\
+$P(A_i|Z_i = False) = \frac{\sum{(A_i = False) in all samples where Z_i = False}}{\sum{A_i in all samples where Z_i = False}}$</p>
+<p>Our objective being $P(D|A_0...A_n)$, for large $n$, the CPT becomes quickly untractable. To keep it simple, we try with n = 1, meaning, for a window of every actions. Then we have as equation \
+$P(D|A_0 = True) = \frac{\sum{(D = True) in all samples A_0 = True}}{\sum{D in all samples where A_0 = True}}$\
+$P(D|A_0 = False) = \frac{\sum{(D = True) in all samples A_0 = False}}{\sum{D in all samples where A_0 = False}}$</p>
 <h2 id="Appendix">Appendix<a class="anchor-link" href="#Appendix">&#182;</a></h2><ul>
-<li>measurements source code: </li>
-<li>cpt computing source code:</li>
-<li>sensor fusion computing source code:</li>
+<li>measurements source code: <a href="https://github.com/ERUD1T3/rai-project-one/blob/main/sources/test_files/run_measurements.py">https://github.com/ERUD1T3/rai-project-one/blob/main/sources/test_files/run_measurements.py</a></li>
+<li>cpt computing source code: <a href="https://github.com/ERUD1T3/rai-project-one/blob/main/sources/test_files/compute_cpt.py">https://github.com/ERUD1T3/rai-project-one/blob/main/sources/test_files/compute_cpt.py</a></li>
+<li>sensor fusion computing belief map source code: <a href="https://github.com/ERUD1T3/rai-project-one/blob/main/sources/examples/test_files/BBN.py">https://github.com/ERUD1T3/rai-project-one/blob/main/sources/examples/test_files/BBN.py</a></li>
 <li>project repository: <a href="https://github.com/ERUD1T3/rai-project-one">https://github.com/ERUD1T3/rai-project-one</a></li>
+<li>final cpts folder: <a href="https://github.com/ERUD1T3/rai-project-one/tree/main/data/cpts">https://github.com/ERUD1T3/rai-project-one/tree/main/data/cpts</a></li>
 </ul>
 <h2 id="References">References<a class="anchor-link" href="#References">&#182;</a></h2><p>[1] <a href="https://www.cs.cmu.edu/~cga/nao/doc/user-guide.pdf\">https://www.cs.cmu.edu/~cga/nao/doc/user-guide.pdf\</a>
 [2] <a href="http://doc.aldebaran.com/1-14/naoqi/motion/control-walk-api.html#ALMotionProxy::move__floatCR.floatCR.floatCR\">http://doc.aldebaran.com/1-14/naoqi/motion/control-walk-api.html#ALMotionProxy::move__floatCR.floatCR.floatCR\</a>

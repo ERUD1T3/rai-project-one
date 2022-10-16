@@ -1,3 +1,4 @@
+# probability distribution of the actual distance from the wall being less than 50cm
 ('z', 0): 1.0
 ('z', 1): 1.0
 ('z', 2): 1.0
