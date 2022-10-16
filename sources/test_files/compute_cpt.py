@@ -1,7 +1,7 @@
 # read samples and compute probabilities
-from curses import A_PROTECT
 from get_probs import read_from_csv, generate_cpts
 import os
+import pomegranate as pg
 
 def main():
 
@@ -39,6 +39,42 @@ def main():
         # write the lines and their probabilities
         for cpt in a_cpts:
             f.write("{}: {}\n".format(cpt, a_cpts[cpt]))
+
+
+    # create the model
+    model = pg.BayesianNetwork("Door Model")
+
+
+    z_nodes = []
+    a_nodes = []
+
+    # create the nodes
+    for cpt in z_cpts:
+        # create the node
+        z_node = pg.Node(
+            pg.DiscreteDistribution({
+                'z{}=True'.format(cpt[1]): z_cpts[cpt],
+                'z{}=False'.format(cpt[1]): 1 - z_cpts[cpt]
+                })
+            )
+
+    # add cpt actions
+    for cpt in a_cpts:
+        # create the node
+        a_node = pg.Node(
+            pg.DiscreteDistribution({
+                'a{}=True'.format(cpt[1]): a_cpts[cpt],
+                'a{}=False'.format(cpt[1]): 1 - a_cpts[cpt]
+                })
+            )
+        # add the node to the list
+        z_nodes.append(z_node)
+   
+    # door nodes
+    # door = pg.Node(
+    #     pg.DiscreteDistribution({
+
+
         
 
 if __name__ == '__main__':
