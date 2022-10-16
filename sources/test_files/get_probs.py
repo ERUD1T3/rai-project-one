@@ -6,6 +6,7 @@ def read_from_csv(path, n_samples=60):
     time_arr = []
     z_array = []
     a_array = []
+    d_array = []
     with open(path, 'r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         # skip the first line
@@ -20,16 +21,21 @@ def read_from_csv(path, n_samples=60):
             z_array.append(True if row[1] == 'True' else False)
             # get the sonar reading
             a_array.append(True if row[2] == 'True' else False)
+            # get the door reading
+            d_array.append(True if row[3] == 'True' else False)
+
             # check if we have read enough samples
             if len(time_arr) >= n_samples:
                 break
 
-    return time_arr, z_array, a_array
+    return time_arr, z_array, a_array, d_array
 
 # compute probability
 def compute_prob(x_array):
     # computer probabilities based on count
     # get the number of times true appears in the array
+    if len(x_array) == 0:
+        return 0
     count = 0.0
     for x in x_array:
         if x: count += 1
@@ -57,41 +63,83 @@ def generate_cpts(samples):
     # find probabilities for each variable at the given time step
     z_cpts = {}
     a_cpts = {}
+    d_cpts = {}
 
     # print the samples
     print(samples)
 
+    # get z cpts
     # for each time step
     for t in range(num_time_steps):
         # for each variable skip the first one
-        for var in range(1, num_vars):
-            # get the array of values for the variable at the given time step
-            x_array = []
-            for sample in samples:
-                # print length of sample
-                # print(len(sample))
-                # print(len(sample[0]))
-                # print var and t
-                # print("var: {}".format( var))
-                # print("t: {}".format( t))
-                # print sample at var and t
-                # print("sample at {}{} =  {}".format(var, t, sample[var][t]))
-                x_array.append(sample[var][t])
-            # get the probabilities of the sonar readings based on the check function
-            bools = x_array
-            print(bools)
-            # computer probabilities based on count
-            prob = compute_prob(bools)
-            # add the probability to the cpts
-            if var == 1:
-                z_cpts[('z', t)] = prob
-                # print cpt with 3 decimal places
-                print("cpt[('z', {})] = {:.3f}".format(t, prob))
-                
+        var = 1
+        # get the array of values for the variable at the given time step
+        x_array = []
+        for sample in samples:
+            # print length of sample
+            # print(len(sample))
+            # print(len(sample[0]))
+            # print var and t
+            # print("var: {}".format( var))
+            # print("t: {}".format( t))
+            # print sample at var and t
+            # print("sample at {}{} =  {}".format(var, t, sample[var][t]))
+            x_array.append(sample[var][t])
+        # get the probabilities of the sonar readings based on the check function
+        bools = x_array
+        print(bools)
+        # computer probabilities based on count
+        prob = compute_prob(bools)
+        # add the probability to the cpts
+        
+        z_cpts[f'z_{t}'] = prob
+        # print cpt with 3 decimal places
+        # print("cpt[('z', {})] = {:.3f}".format(t, prob))
+            
+    # get a cpts depending on z
+    # for each time step  
+    for t in range(num_time_steps):
+        # for each variable skip the first one
+        var = 2
+        # get the array of values for the variable at the given time step
+        z_true_array = []
+        z_false_array = []
+        for sample in samples:
+            # count the number of times the sonar reading is true
+            if sample[1][t]:
+                z_true_array.append(sample[var][t])
             else:
-                a_cpts[('a', t)] = prob
-                # print cpt with 3 decimal places
-                print("cpt[('a', {})] = {:.3f}".format(t, prob))
+                z_false_array.append(sample[var][t])
+    
+        # get the probabilities for the sonar readings true and false
+        prob_true = compute_prob(z_true_array)
+        prob_false = compute_prob(z_false_array)
+        # add the probability to the cpts
+        a_cpts[f'a_{t}|z=True'] = prob_true
+        a_cpts[f'a_{t}|z=False'] = prob_false
 
-    return z_cpts, a_cpts
+    # get d cpts depending on a
+    # for each time step
+    for t in range(num_time_steps):
+        var = 3
+        # get the array of values for the variable at the given time step
+        a_true_array = []
+        a_false_array = []
+        for sample in samples:
+            # count the number of times the sonar reading is true
+            if sample[2][t]:
+                a_true_array.append(sample[var][t])
+            else:
+                a_false_array.append(sample[var][t])
+
+        # get the probabilities for the sonar readings true and false
+        prob_true = compute_prob(a_true_array)
+        prob_false = compute_prob(a_false_array)
+        # add the probability to the cpts
+        d_cpts[f'd_{t}|a=True'] = prob_true
+        d_cpts[f'd_{t}|a=False'] = prob_false
+
+    
+
+    return z_cpts, a_cpts, d_cpts
 
